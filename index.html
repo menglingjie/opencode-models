@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenCode 模型列表 · Inference Models</title>
+<meta name="description" content="从 https://opencode.ai/inference/v1/models 获取并浏览 OpenCode 推理模型列表，支持多维过滤与详情查看。">
+<style>
+  :root{
+    --bg: #f6f7f9;
+    --bg-elev: #ffffff;
+    --bg-soft: #f0f2f5;
+    --bg-hover: #f4f6f8;
+    --border: #e2e5ea;
+    --border-strong: #cfd4dc;
+    --text: #14171c;
+    --text-soft: #5b6472;
+    --text-faint: #8a93a2;
+    --accent: #f97316;
+    --accent-soft: rgba(249,115,22,.12);
+    --accent-text: #c2410c;
+    --blue: #2563eb;
+    --green: #059669;
+    --green-soft: rgba(5,150,105,.12);
+    --purple: #7c3aed;
+    --purple-soft: rgba(124,58,237,.12);
+    --cyan: #0891b2;
+    --cyan-soft: rgba(8,145,178,.12);
+    --amber: #b45309;
+    --amber-soft: rgba(180,83,9,.12);
+    --shadow: 0 1px 2px rgba(16,24,40,.05), 0 8px 24px -12px rgba(16,24,40,.18);
+    --shadow-lg: 0 24px 60px -20px rgba(16,24,40,.35);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  html[data-theme="dark"]{
+    --bg: #0d1015;
+    --bg-elev: #141920;
+    --bg-soft: #1a2029;
+    --bg-hover: #1c232c;
+    --border: #242c37;
+    --border-strong: #333d4b;
+    --text: #e7ecf3;
+    --text-soft: #9aa6b6;
+    --text-faint: #6c7787;
+    --accent: #fb923c;
+    --accent-soft: rgba(251,146,60,.14);
+    --accent-text: #fdba74;
+    --blue: #60a5fa;
+    --green: #34d399;
+    --green-soft: rgba(52,211,153,.14);
+    --purple: #a78bfa;
+    --purple-soft: rgba(167,139,250,.14);
+    --cyan: #22d3ee;
+    --cyan-soft: rgba(34,211,238,.14);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251,191,36,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    --shadow-lg: 0 24px 60px -20px rgba(0,0,0,.8);
+  }
+  @media (prefers-color-scheme: dark){
+    html[data-theme="auto"]{
+      --bg: #0d1015; --bg-elev: #141920; --bg-soft: #1a2029; --bg-hover: #1c232c;
+      --border: #242c37; --border-strong: #333d4b; --text: #e7ecf3; --text-soft: #9aa6b6; --text-faint: #6c7787;
+      --accent: #fb923c; --accent-soft: rgba(251,146,60,.14); --accent-text: #fdba74;
+      --blue: #60a5fa; --green: #34d399; --green-soft: rgba(52,211,153,.14);
+      --purple: #a78bfa; --purple-soft: rgba(167,139,250,.14); --cyan: #22d3ee; --cyan-soft: rgba(34,211,238,.14);
+      --amber: #fbbf24; --amber-soft: rgba(251,191,36,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+      --shadow-lg: 0 24px 60px -20px rgba(0,0,0,.8);
+    }
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--sans); font-size:14px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-text); text-decoration:none}
+  button{font-family:inherit; font-size:inherit; color:inherit}
+
+  .wrap{max-width:1560px; margin:0 auto; padding:24px 20px 64px}
+
+  /* ---------- Header ---------- */
+  header.top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    flex-wrap:wrap; margin-bottom:22px;
+  }
+  .brand{display:flex; align-items:center; gap:14px}
+  .logo{
+    width:44px; height:44px; border-radius:12px; display:grid; place-items:center;
+    background:linear-gradient(140deg,var(--accent),#ef4444);
+    color:#fff; font-weight:800; font-size:15px; letter-spacing:.5px;
+    box-shadow:0 6px 18px -6px rgba(249,115,22,.65); flex:none;
+  }
+  h1{margin:0; font-size:20px; font-weight:700; letter-spacing:-.01em}
+  .sub{margin:2px 0 0; color:var(--text-soft); font-size:13px}
+  .sub code{font-family:var(--mono); font-size:12px; background:var(--bg-soft); padding:1px 6px; border-radius:5px; color:var(--text-soft)}
+  .top-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 12px;
+    background:var(--bg-elev); border:1px solid var(--border); border-radius:9px;
+    cursor:pointer; font-size:13px; font-weight:500; color:var(--text-soft);
+    transition:background .15s, border-color .15s, color .15s, transform .06s;
+    white-space:nowrap;
+  }
+  .btn:hover{background:var(--bg-hover); border-color:var(--border-strong); color:var(--text)}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.icon{padding:0; width:34px; justify-content:center}
+  .btn .spin{display:inline-block; animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- Stats ---------- */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px}
+  .stat{background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; box-shadow:var(--shadow)}
+  .stat .k{color:var(--text-faint); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:600}
+  .stat .v{font-size:22px; font-weight:700; letter-spacing:-.02em; margin-top:2px; font-variant-numeric:tabular-nums}
+  .stat .v small{font-size:12px; font-weight:500; color:var(--text-soft); margin-left:3px}
+
+  /* ---------- Filters ---------- */
+  .panel{
+    background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .filters{padding:14px 16px; display:flex; flex-direction:column; gap:12px}
+  .frow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .frow.top{flex-wrap:nowrap}
+  .search{position:relative; flex:1 1 320px; min-width:220px}
+  .search input{
+    width:100%; height:36px; padding:0 34px 0 34px; border-radius:9px;
+    border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;
+    outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  .search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .search input::-webkit-search-cancel-button,
+  .search input::-webkit-search-decoration{-webkit-appearance:none; appearance:none; display:none}
+  .search .ico{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text-faint); display:grid; place-items:center; pointer-events:none}
+  .search .clear{position:absolute; right:6px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:var(--text-faint); cursor:pointer; width:24px; height:24px; border-radius:6px; display:none; place-items:center}
+  .search .clear:hover{background:var(--bg-soft); color:var(--text)}
+  .search.has-value .clear{display:grid}
+
+  select, .fsel{
+    height:36px; padding:0 28px 0 10px; border-radius:9px; border:1px solid var(--border);
+    background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a93a2' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 9px center;
+    color:var(--text); font-size:13px; outline:none; appearance:none; cursor:pointer;
+    max-width:100%;
+  }
+  select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+
+  .chips{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; height:30px; padding:0 11px;
+    border-radius:999px; border:1px solid var(--border); background:var(--bg);
+    color:var(--text-soft); font-size:12.5px; cursor:pointer; user-select:none;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--border-strong); color:var(--text)}
+  .chip.on{background:var(--accent-soft); border-color:transparent; color:var(--accent-text); font-weight:600}
+  .chip .dot{width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.75}
+
+  .fgroup{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .flabel{font-size:11.5px; font-weight:700; color:var(--text-faint); letter-spacing:.05em; text-transform:uppercase}
+  .fdivider{width:1px; height:22px; background:var(--border); margin:0 2px}
+
+  .active-filters{display:flex; gap:6px; flex-wrap:wrap; align-items:center; padding-top:2px}
+  .tag{
+    display:inline-flex; align-items:center; gap:6px; padding:3px 6px 3px 10px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent-text); font-size:12px; font-weight:600;
+  }
+  .tag button{border:0; background:transparent; color:inherit; cursor:pointer; width:16px; height:16px; border-radius:50%; display:grid; place-items:center; opacity:.7}
+  .tag button:hover{opacity:1; background:rgba(0,0,0,.08)}
+
+  /* ---------- Table ---------- */
+  .tablewrap{overflow-x:auto; border-top:1px solid var(--border)}
+  table{width:100%; border-collapse:collapse; min-width:1080px}
+  thead th{
+    position:sticky; top:0; z-index:2; background:var(--bg-soft);
+    text-align:left; font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-faint); padding:10px 14px; border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  thead th.sortable{cursor:pointer; user-select:none}
+  thead th.sortable:hover{color:var(--text)}
+  thead th .arrow{opacity:0; margin-left:4px; font-size:10px}
+  thead th.active .arrow{opacity:1; color:var(--accent)}
+  thead th.active{color:var(--accent-text)}
+  tbody tr{border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s}
+  tbody tr:last-child{border-bottom:0}
+  tbody tr:hover{background:var(--bg-hover)}
+  tbody td{padding:11px 14px; vertical-align:middle}
+  .mname{font-weight:650; font-size:13.5px; letter-spacing:-.01em}
+  .mid{font-family:var(--mono); font-size:11.5px; color:var(--text-faint); margin-top:2px; word-break:break-all}
+  .prov{font-weight:600; font-size:13px}
+  .fam{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:2px}
+  .num{font-variant-numeric:tabular-nums; font-weight:600; font-size:13px}
+  .num small{display:block; font-weight:400; color:var(--text-faint); font-size:11px; font-family:var(--mono)}
+  .date{color:var(--text-soft); font-size:12.5px; font-variant-numeric:tabular-nums}
+
+  .badges{display:flex; gap:4px; flex-wrap:wrap}
+  .b{
+    display:inline-flex; align-items:center; gap:4px; height:21px; padding:0 7px; border-radius:6px;
+    font-size:11px; font-weight:600; white-space:nowrap; background:var(--bg-soft); color:var(--text-soft);
+  }
+  .b.text{background:var(--bg-soft); color:var(--text-soft)}
+  .b.image{background:var(--purple-soft); color:var(--purple)}
+  .b.audio{background:var(--cyan-soft); color:var(--cyan)}
+  .b.video{background:var(--amber-soft); color:var(--amber)}
+  .b.doc{background:var(--blue); color:#fff; opacity:.85}
+  .b.tools{background:var(--green-soft); color:var(--green)}
+  .b.reason{background:var(--accent-soft); color:var(--accent-text)}
+  .b.struct{background:var(--bg-soft); color:var(--text-soft)}
+  .b.open{background:var(--bg-soft); color:var(--text-soft); border:1px dashed var(--border-strong)}
+  .b.free{background:var(--green-soft); color:var(--green)}
+  .b.paid{background:var(--bg-soft); color:var(--text-soft)}
+
+  .price-in{font-weight:600; font-variant-numeric:tabular-nums}
+  .price-out{color:var(--text-soft); font-variant-numeric:tabular-nums; font-size:12px}
+  .empty{text-align:center; padding:56px 20px; color:var(--text-faint)}
+  .empty .big{font-size:34px; margin-bottom:8px}
+  .empty h3{margin:0 0 6px; color:var(--text-soft); font-size:15px}
+
+  .tablefoot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 16px; border-top:1px solid var(--border); flex-wrap:wrap}
+  .count{font-size:12.5px; color:var(--text-soft)}
+  .count b{color:var(--text); font-variant-numeric:tabular-nums}
+  .pager{display:flex; align-items:center; gap:4px}
+  .pager button{
+    min-width:30px; height:30px; padding:0 8px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg-elev); color:var(--text-soft); cursor:pointer; font-size:12.5px; font-variant-numeric:tabular-nums;
+  }
+  .pager button:hover:not(:disabled){background:var(--bg-hover); color:var(--text)}
+  .pager button:disabled{opacity:.4; cursor:not-allowed}
+  .pager button.cur{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700}
+  .pager .gap{color:var(--text-faint); padding:0 2px}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(10,13,18,.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:24px; z-index:100;
+  }
+  .overlay.open{display:flex; animation:fade .16s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--bg-elev); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-lg);
+    width:min(920px, 100%); max-height:88vh; display:flex; flex-direction:column; overflow:hidden;
+    animation:pop .18s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes pop{from{transform:translateY(12px) scale(.985); opacity:0}to{transform:none; opacity:1}}
+  .mhead{padding:16px 20px; border-bottom:1px solid var(--border); display:flex; gap:14px; align-items:flex-start}
+  .mhead .t{min-width:0; flex:1}
+  .mhead h2{margin:0; font-size:18px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .mhead .meta{margin-top:5px; font-family:var(--mono); font-size:12px; color:var(--text-faint); word-break:break-all}
+  .mhead .desc{margin-top:8px; color:var(--text-soft); font-size:13px; line-height:1.6}
+  .mclose{border:0; background:var(--bg-soft); width:32px; height:32px; border-radius:8px; cursor:pointer; display:grid; place-items:center; color:var(--text-soft); flex:none}
+  .mclose:hover{background:var(--bg-hover); color:var(--text)}
+  .mtabs{display:flex; gap:2px; padding:0 16px; border-bottom:1px solid var(--border); overflow-x:auto; background:var(--bg-soft)}
+  .mtab{
+    border:0; background:transparent; padding:10px 13px; font-size:13px; font-weight:600; color:var(--text-faint);
+    cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  .mtab:hover{color:var(--text-soft)}
+  .mtab.on{color:var(--accent-text); border-bottom-color:var(--accent)}
+  .mbody{padding:18px 20px 22px; overflow-y:auto; flex:1}
+  .mbody pre{margin:0}
+
+  .sec{margin-bottom:20px}
+  .sec:last-child{margin-bottom:0}
+  .sec h4{
+    margin:0 0 10px; font-size:11.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--text-faint); display:flex; align-items:center; gap:8px;
+  }
+  .sec h4::after{content:""; flex:1; height:1px; background:var(--border)}
+  .kv{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:9px}
+  .kv > div{background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px}
+  .kv dt{color:var(--text-faint); font-size:11.5px; font-weight:600; margin:0 0 3px}
+  .kv dd{margin:0; font-size:13px; font-weight:600; word-break:break-word}
+  .kv dd.mono{font-family:var(--mono); font-size:12px; font-weight:500}
+  .kv dd .sub{font-weight:400; color:var(--text-faint); font-size:11.5px; display:block; margin-top:2px}
+
+  .codeblock{
+    background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:12px 14px;
+    font-family:var(--mono); font-size:12px; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-break:break-word;
+    color:var(--text-soft); max-height:420px; overflow-y:auto;
+  }
+  .codeblock .k{color:var(--purple)}
+  .codeblock .s{color:var(--green)}
+  .codeblock .n{color:var(--amber)}
+  .codeblock .b{color:var(--blue)}
+
+  .api-card{border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:9px; background:var(--bg)}
+  .api-card .hd{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px}
+  .api-card .fmt{font-family:var(--mono); font-size:12.5px; font-weight:700; padding:2px 8px; border-radius:6px; background:var(--accent-soft); color:var(--accent-text)}
+  .api-card .url{font-family:var(--mono); font-size:12px; color:var(--text-soft); word-break:break-all; margin-bottom:6px}
+  .api-card .row{font-size:12px; color:var(--text-soft); margin-top:4px}
+  .api-card .row b{color:var(--text); font-weight:600}
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translate(-50%, 16px);
+    background:var(--text); color:var(--bg); padding:9px 16px; border-radius:10px; font-size:13px; font-weight:500;
+    opacity:0; pointer-events:none; transition:.2s; z-index:200; box-shadow:var(--shadow-lg);
+  }
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+
+  .errbox{
+    background:var(--bg-elev); border:1px solid var(--border); border-left:3px solid #ef4444;
+    border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow);
+  }
+  .errbox h3{margin:0 0 6px; font-size:15px}
+  .errbox p{margin:0 0 12px; color:var(--text-soft); font-size:13px}
+
+  .skel{height:14px; border-radius:5px; background:linear-gradient(90deg,var(--bg-soft),var(--bg-hover),var(--bg-soft)); background-size:200% 100%; animation:sh 1.3s infinite}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  @media (max-width:720px){
+    .wrap{padding:16px 12px 48px}
+    .frow.top{flex-wrap:wrap}
+    .search{flex-basis:100%}
+    h1{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">OC</div>
+      <div>
+        <h1>OpenCode 推理模型列表</h1>
+        <p class="sub">数据来源 <code>https://opencode.ai/inference/v1/models</code></p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="btnCopyAll" title="复制全部模型的 JSON">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        复制 JSON
+      </button>
+      <button class="btn" id="btnRefresh">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="refreshIco"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        刷新
+      </button>
+      <button class="btn icon" id="btnTheme" title="切换主题">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIco"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="panel" style="margin-bottom:18px">
+    <div class="filters">
+      <div class="frow top">
+        <div class="search" id="searchWrap">
+          <span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <input id="q" type="search" placeholder="搜索模型名称、ID、描述、系列…（按 / 聚焦）" autocomplete="off">
+          <button class="clear" id="qClear" title="清空"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <select id="providerSel" title="提供商"></select>
+        <select id="familySel" title="模型系列"></select>
+        <select id="modalitySel" title="输入模态">
+          <option value="">全部输入模态</option>
+          <option value="image">支持图片输入</option>
+          <option value="audio">支持音频输入</option>
+          <option value="video">支持视频输入</option>
+          <option value="doc">支持文档(PDF)输入</option>
+          <option value="text-only">仅文本输入</option>
+        </select>
+        <select id="apiSel" title="API 格式">
+          <option value="">全部 API 格式</option>
+          <option value="chat-completions">chat-completions</option>
+          <option value="responses">responses</option>
+          <option value="messages">messages (Anthropic)</option>
+          <option value="generate-content">generate-content (Google)</option>
+        </select>
+        <select id="priceSel" title="价格">
+          <option value="">全部价格</option>
+          <option value="free">免费 (0)</option>
+          <option value="paid">付费</option>
+        </select>
+        <select id="ctxSel" title="上下文窗口">
+          <option value="">全部上下文</option>
+          <option value="128000">≥ 128K</option>
+          <option value="200000">≥ 200K</option>
+          <option value="400000">≥ 400K</option>
+          <option value="1000000">≥ 1M</option>
+        </select>
+        <select id="sortSel" title="排序">
+          <option value="default">默认排序</option>
+          <option value="name">名称 A→Z</option>
+          <option value="context">上下文窗口 ↓</option>
+          <option value="output">最大输出 ↓</option>
+          <option value="price">输入价格 ↑</option>
+          <option value="release">发布时间 ↓</option>
+        </select>
+      </div>
+
+      <div class="frow">
+        <div class="fgroup">
+          <span class="flabel">能力</span>
+          <div class="chips" id="capChips">
+            <button class="chip" data-cap="tools"><span class="dot"></span>工具调用</button>
+            <button class="chip" data-cap="reasoning"><span class="dot"></span>推理</button>
+            <button class="chip" data-cap="structured"><span class="dot"></span>结构化输出</button>
+            <button class="chip" data-cap="effort"><span class="dot"></span>可调推理强度</button>
+            <button class="chip" data-cap="open"><span class="dot"></span>开放权重</button>
+          </div>
+        </div>
+        <div class="fdivider"></div>
+        <div class="fgroup">
+          <span class="flabel">显示</span>
+          <select id="sizeSel" title="每页条数">
+            <option value="25">每页 25 条</option>
+            <option value="50">每页 50 条</option>
+            <option value="100">每页 100 条</option>
+            <option value="9999">全部显示</option>
+          </select>
+          <button class="btn" id="btnReset">重置筛选</button>
+        </div>
+      </div>
+
+      <div class="active-filters" id="activeFilters"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div id="tableHost">
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="name" style="min-width:220px">模型 <span class="arrow">▲</span></th>
+              <th class="sortable" data-sort="provider" style="min-width:130px">提供商 / 系列 <span class="arrow">▲</span></th>
+              <th class="sortable" data-sort="context" style="min-width:110px">上下文窗口 <span class="arrow">▲</span></th>
+              <th class="sortable" data-sort="output" style="min-width:100px">最大输出 <span class="arrow">▲</span></th>
+              <th style="min-width:170px">输入模态</th>
+              <th style="min-width:190px">能力</th>
+              <th class="sortable" data-sort="price" style="min-width:140px">价格 / 1M tokens <span class="arrow">▲</span></th>
+              <th class="sortable" data-sort="release" style="min-width:110px">发布时间 <span class="arrow">▲</span></th>
+              <th style="min-width:70px">操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="tablefoot">
+        <div class="count" id="countInfo">加载中…</div>
+        <div class="pager" id="pager"></div>
+      </div>
+    </div>
+    <div id="errHost" style="display:none; padding:16px"></div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="mhead">
+      <div class="t">
+        <h2 id="mTitle"></h2>
+        <div class="meta" id="mMeta"></div>
+        <div class="desc" id="mDesc"></div>
+      </div>
+      <button class="mclose" id="mClose" title="关闭 (Esc)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="mtabs" id="mTabs"></div>
+    <div class="mbody" id="mBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const API_URL = "https://opencode.ai/inference/v1/models";
+  const PROVIDER_NAMES = {
+    anthropic: "Anthropic", openai: "OpenAI", google: "Google", xai: "xAI",
+    zhipuai: "智谱 GLM", moonshotai: "Moonshot", minimax: "MiniMax", alibaba: "阿里 Qwen",
+    meta: "Meta", mistral: "Mistral", mistralai: "Mistral", deepseek: "DeepSeek",
+    nvidia: "NVIDIA", xiaomi: "小米 MiMo", meituan: "美团 LongCat",
+    thinkingmachines: "Thinking Machines", reflection: "Reflection AI", recursive: "Recursive AI"
+  };
+  const API_LABELS = {
+    "chat-completions": "chat-completions (OpenAI 兼容)",
+    "responses": "responses (OpenAI Responses)",
+    "messages": "messages (Anthropic Messages)",
+    "generate-content": "generate-content (Google)"
+  };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  let ALL = [];
+  let state = {
+    q: "", provider: "", family: "", modality: "", api: "", price: "", ctx: "",
+    caps: new Set(), sort: "default", sortDir: "asc", page: 1, size: 25
+  };
+
+  /* ---------------- helpers ---------------- */
+  const fmtNum = (n) => (n === null || n === undefined || n === "") ? "—" : Number(n).toLocaleString("en-US");
+  const fmtCtx = (n) => {
+    if (!n) return "—";
+    if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 2).replace(/\.00$/, "") + "M";
+    if (n >= 1000) return Math.round(n / 1000) + "K";
+    return String(n);
+  };
+  const fmtPrice = (p) => {
+    if (p === null || p === undefined) return "—";
+    if (p === 0) return "$0";
+    return "$" + (p < 1 ? p.toFixed(p < 0.1 ? 3 : 2).replace(/0+$/, "").replace(/\.$/, "") : p.toFixed(2).replace(/\.00$/, ""));
+  };
+  const providerOf = (m) => {
+    const cid = m.canonical_id || "";
+    if (cid.includes("/")) {
+      const p = cid.split("/")[0];
+      return PROVIDER_NAMES[p] || p;
+    }
+    if (m.family) {
+      const f = m.family;
+      if (f.startsWith("claude")) return "Anthropic";
+      if (f.startsWith("gpt")) return "OpenAI";
+      if (f.startsWith("gemini")) return "Google";
+      if (f.startsWith("glm")) return "智谱 GLM";
+      if (f.startsWith("minimax")) return "MiniMax";
+      if (f.startsWith("qwen")) return "阿里 Qwen";
+      if (f.startsWith("grok")) return "xAI";
+      if (f.startsWith("kimi")) return "Moonshot";
+      if (f.startsWith("deepseek")) return "DeepSeek";
+      if (f.startsWith("muse")) return "Meta";
+      if (f.startsWith("mistral")) return "Mistral";
+      if (f.startsWith("nemotron")) return "NVIDIA";
+      if (f.startsWith("mimo")) return "小米 MiMo";
+      if (f.startsWith("longcat")) return "美团 LongCat";
+      if (f.startsWith("ling")) return "阿里 通义";
+      if (f === "big-pickle" || f === "beam" || f === "flint") return "opencode";
+    }
+    return "opencode";
+  };
+  const modCats = (m) => {
+    const ins = (m.modalities && m.modalities.input) || [];
+    const cats = new Set();
+    for (const i of ins) {
+      const t = String(i).toLowerCase();
+      if (t === "text") cats.add("text");
+      else if (t.startsWith("image/") || t === "image") cats.add("image");
+      else if (t.startsWith("audio/")) cats.add("audio");
+      else if (t.startsWith("video/")) cats.add("video");
+      else if (t.includes("pdf") || t.includes("document")) cats.add("doc");
+    }
+    return cats;
+  };
+  const inPrice = (m) => (m.cost && m.cost.text && m.cost.text.input) ? m.cost.text.input.price : null;
+  const outPrice = (m) => (m.cost && m.cost.text && m.cost.text.output) ? m.cost.text.output.price : null;
+  const hasEffort = (m) => !!(m.capabilities && m.capabilities.reasoning && m.capabilities.reasoning.effort && m.capabilities.reasoning.effort.length);
+  const structuredOk = (m) => m.capabilities && m.capabilities.structured_output === true;
+  const apiFormats = (m) => Object.keys(m.api || {});
+
+  /* ---------------- data ---------------- */
+  async function load() {
+    setLoading();
+    try {
+      const res = await fetch(API_URL, { headers: { "Accept": "application/json" }, cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
+      const json = await res.json();
+      ALL = (json && Array.isArray(json.data)) ? json.data : [];
+      if (!ALL.length) throw new Error("返回数据为空");
+      buildSelects();
+      renderStats();
+      state.page = 1;
+      render();
+      $("#errHost").style.display = "none";
+      $("#tableHost").style.display = "";
+    } catch (e) {
+      console.error(e);
+      $("#tableHost").style.display = "none";
+      const host = $("#errHost");
+      host.style.display = "";
+      host.innerHTML = `<div class="errbox">
+        <h3>加载模型列表失败</h3>
+        <p>${esc(e.message)}。该接口可能存在跨域 (CORS) 限制 —— 若浏览器直接打开本文件失败，请使用本地静态服务器，或参考下方说明。</p>
+        <p style="margin-bottom:10px"><b>本地运行：</b><code style="font-family:var(--mono);font-size:12px;background:var(--bg);padding:2px 6px;border-radius:5px">python3 -m http.server 8080</code> 然后访问 <code style="font-family:var(--mono);font-size:12px">http://localhost:8080</code></p>
+        <p style="margin-bottom:12px"><b>接口地址：</b><code style="font-family:var(--mono);font-size:12px">${esc(API_URL)}</code></p>
+        <button class="btn primary" id="btnRetry">重试</button>
+      </div>`;
+      $("#btnRetry").onclick = load;
+    }
+  }
+
+  function setLoading() {
+    const tb = $("#tbody");
+    tb.innerHTML = Array.from({ length: 8 }).map(() => `<tr><td colspan="9"><div class="skel" style="margin:4px 0"></div></td></tr>`).join("");
+    $("#countInfo").textContent = "加载中…";
+    $("#pager").innerHTML = "";
+  }
+
+  /* ---------------- selects / stats ---------------- */
+  function buildSelects() {
+    const provs = [...new Set(ALL.map(providerOf))].sort((a, b) => a.localeCompare(b));
+    const fams = [...new Set(ALL.map(m => m.family).filter(Boolean))].sort();
+    $("#providerSel").innerHTML = `<option value="">全部提供商</option>` + provs.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join("");
+    $("#familySel").innerHTML = `<option value="">全部系列</option>` + fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join("");
+  }
+
+  function renderStats() {
+    const free = ALL.filter(m => inPrice(m) === 0).length;
+    const open = ALL.filter(m => m.open_weights).length;
+    const provs = new Set(ALL.map(providerOf)).size;
+    const ctxMax = Math.max(...ALL.map(m => (m.limit && m.limit.context) || 0));
+    const cards = [
+      ["模型总数", ALL.length, "个"],
+      ["提供商", provs, "家"],
+      ["免费模型", free, "个"],
+      ["开放权重", open, "个"],
+      ["最大上下文", fmtCtx(ctxMax), "tokens"],
+      ["最后更新", new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }), ""]
+    ];
+    $("#stats").innerHTML = cards.map(c => `
+      <div class="stat"><div class="k">${c[0]}</div><div class="v">${c[1]}${c[2] ? `<small>${c[2]}</small>` : ""}</div></div>`).join("");
+  }
+
+  /* ---------------- filtering ---------------- */
+  function filtered() {
+    const q = state.q.trim().toLowerCase();
+    let list = ALL.filter(m => {
+      if (state.provider && providerOf(m) !== state.provider) return false;
+      if (state.family && m.family !== state.family) return false;
+      if (state.api && !apiFormats(m).includes(state.api)) return false;
+      if (state.price === "free" && inPrice(m) !== 0) return false;
+      if (state.price === "paid" && !(inPrice(m) > 0)) return false;
+      if (state.ctx && !((m.limit && m.limit.context) || 0) >= Number(state.ctx)) return false;
+      if (state.modality) {
+        const cats = modCats(m);
+        if (state.modality === "text-only") { if (cats.size > 1 || cats.has("image") || cats.has("audio") || cats.has("video") || cats.has("doc")) return false; }
+        else if (!cats.has(state.modality)) return false;
+      }
+      const c = state.caps;
+      if (c.size) {
+        if (c.has("tools") && !(m.capabilities && m.capabilities.tools && m.capabilities.tools.supported)) return false;
+        if (c.has("reasoning") && !(m.capabilities && m.capabilities.reasoning && m.capabilities.reasoning.supported)) return false;
+        if (c.has("structured") && !structuredOk(m)) return false;
+        if (c.has("effort") && !hasEffort(m)) return false;
+        if (c.has("open") && !m.open_weights) return false;
+      }
+      if (q) {
+        const hay = [m.name, m.id, m.description, m.family, m.canonical_id, providerOf(m), m.knowledge].filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    const dir = state.sortDir === "asc" ? 1 : -1;
+    const by = {
+      name: (a, b) => (a.name || "").localeCompare(b.name || "", "en"),
+      provider: (a, b) => providerOf(a).localeCompare(providerOf(b), "en"),
+      context: (a, b) => ((a.limit && a.limit.context) || 0) - ((b.limit && b.limit.context) || 0),
+      output: (a, b) => ((a.limit && a.limit.output) || 0) - ((b.limit && b.limit.output) || 0),
+      price: (a, b) => (inPrice(a) ?? 1e9) - (inPrice(b) ?? 1e9),
+      release: (a, b) => String(a.release_date || "").localeCompare(String(b.release_date || ""))
+    };
+    if (state.sort !== "default" && by[state.sort]) {
+      const f = by[state.sort];
+      list = list.slice().sort((a, b) => {
+        const r = f(a, b);
+        return r !== 0 ? r * dir : String(a.id).localeCompare(String(b.id));
+      });
+    }
+    return list;
+  }
+
+  /* ---------------- rendering ---------------- */
+  function modBadges(m) {
+    const cats = modCats(m);
+    const map = { text: ["文本", "text"], image: ["图片", "image"], audio: ["音频", "audio"], video: ["视频", "video"], doc: ["文档", "doc"] };
+    const order = ["text", "image", "audio", "video", "doc"];
+    const out = order.filter(c => cats.has(c)).map(c => `<span class="b ${map[c][1]}">${map[c][0]}</span>`);
+    return out.length ? `<div class="badges">${out.join("")}</div>` : "—";
+  }
+
+  function capBadges(m) {
+    const out = [];
+    const c = m.capabilities || {};
+    if (c.tools && c.tools.supported) out.push(`<span class="b tools">工具调用</span>`);
+    if (c.reasoning && c.reasoning.supported) out.push(`<span class="b reason">推理</span>`);
+    if (structuredOk(m)) out.push(`<span class="b struct">结构化输出</span>`);
+    if (hasEffort(m)) {
+      const ef = (c.reasoning.effort || []);
+      out.push(`<span class="b struct" title="推理强度档位：${esc(ef.join(", "))}">强度 ${ef.length}档</span>`);
+    }
+    if (m.open_weights) out.push(`<span class="b open">开放权重</span>`);
+    return out.length ? `<div class="badges">${out.join("")}</div>` : "—";
+  }
+
+  function priceCell(m) {
+    const i = inPrice(m), o = outPrice(m);
+    if (i === null && o === null) return "—";
+    if (i === 0 && o === 0) return `<span class="b free">免费</span>`;
+    const cache = m.cost && m.cost.text && m.cost.text.input && m.cost.text.input.cache ? m.cost.text.input.cache.read : null;
+    const extra = [];
+    if (cache) extra.push(`缓存读 ${fmtPrice(cache)}`);
+    if (m.cost && m.cost.audio) extra.push("含音频计费");
+    if (m.cost && m.cost.multipliers) extra.push("含阶梯系数");
+    return `<div><div class="price-in">${fmtPrice(i)} <span style="color:var(--text-faint);font-weight:400;font-size:11.5px">入</span></div>
+      <div class="price-out">${fmtPrice(o)} <span style="color:var(--text-faint)">出</span></div>
+      ${extra.length ? `<div class="price-out" style="font-size:11px;color:var(--text-faint)">${extra.map(esc).join(" · ")}</div>` : ""}</div>`;
+  }
+
+  function render() {
+    const list = filtered();
+    const totalPages = Math.max(1, Math.ceil(list.length / state.size));
+    if (state.page > totalPages) state.page = totalPages;
+    const start = (state.page - 1) * state.size;
+    const rows = list.slice(start, start + state.size);
+
+    const tb = $("#tbody");
+    if (!rows.length) {
+      tb.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="big">🔍</div><h3>没有匹配的模型</h3><div>试试放宽筛选条件，或 <a href="#" id="clearAll">清除全部筛选</a>。</div></div></td></tr>`;
+      const ca = $("#clearAll"); if (ca) ca.onclick = (e) => { e.preventDefault(); resetFilters(); };
+    } else {
+      tb.innerHTML = rows.map((m, idx) => {
+        const ctx = (m.limit && m.limit.context) || 0;
+        const out = (m.limit && m.limit.output) || 0;
+        const inp = m.limit && m.limit.input;
+        return `<tr data-i="${start + idx}" data-id="${esc(m.id)}">
+          <td>
+            <div class="mname">${esc(m.name)}</div>
+            <div class="mid">${esc(m.id)}</div>
+          </td>
+          <td>
+            <div class="prov">${esc(providerOf(m))}</div>
+            <div class="fam">${esc(m.family || "—")}</div>
+          </td>
+          <td>
+            <div class="num">${fmtCtx(ctx)}<small>${fmtNum(ctx)}</small></div>
+          </td>
+          <td>
+            <div class="num">${fmtCtx(out)}<small>${fmtNum(out)}</small></div>
+            ${inp ? `<div class="fam">入 ${fmtCtx(inp)}</div>` : ""}
+          </td>
+          <td>${modBadges(m)}</td>
+          <td>${capBadges(m)}</td>
+          <td>${priceCell(m)}</td>
+          <td><span class="date">${esc(m.release_date || "—")}</span></td>
+          <td><button class="btn" data-detail="${esc(m.id)}">详情</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    $("#countInfo").innerHTML = `显示 <b>${list.length}</b> / ${ALL.length} 个模型` + (list.length ? ` · 第 ${state.page} / ${totalPages} 页` : "");
+    renderPager(totalPages);
+    renderActiveFilters();
+    syncSortHeader();
+  }
+
+  function renderPager(totalPages) {
+    const p = $("#pager");
+    if (totalPages <= 1) { p.innerHTML = ""; return; }
+    const cur = state.page;
+    const btn = (label, page, dis, act) =>
+      `<button ${dis ? "disabled" : ""} class="${act ? "cur" : ""}" data-page="${page}">${label}</button>`;
+    let html = btn("‹", cur - 1, cur === 1);
+    const set = new Set([1, totalPages, cur, cur - 1, cur + 1]);
+    const pages = [...set].filter(x => x >= 1 && x <= totalPages).sort((a, b) => a - b);
+    let prev = 0;
+    for (const pg of pages) {
+      if (pg - prev > 1) html += `<span class="gap">…</span>`;
+      html += btn(pg, pg, false, pg === cur);
+      prev = pg;
+    }
+    html += btn("›", cur + 1, cur === totalPages);
+    p.innerHTML = html;
+  }
+
+  function syncSortHeader() {
+    $$("thead th.sortable").forEach(th => {
+      const active = th.dataset.sort === state.sort;
+      th.classList.toggle("active", active);
+      const arrow = th.querySelector(".arrow");
+      if (arrow) arrow.textContent = active ? (state.sortDir === "asc" ? "▲" : "▼") : "▲";
+    });
+  }
+
+  function renderActiveFilters() {
+    const host = $("#activeFilters");
+    const tags = [];
+    if (state.q) tags.push(["搜索: " + state.q, "q"]);
+    if (state.provider) tags.push(["提供商: " + state.provider, "provider"]);
+    if (state.family) tags.push(["系列: " + state.family, "family"]);
+    if (state.modality) tags.push(["模态: " + $("#modalitySel").selectedOptions[0].textContent, "modality"]);
+    if (state.api) tags.push(["API: " + state.api, "api"]);
+    if (state.price) tags.push(["价格: " + (state.price === "free" ? "免费" : "付费"), "price"]);
+    if (state.ctx) tags.push(["上下文 ≥ " + fmtCtx(Number(state.ctx)), "ctx"]);
+    state.caps.forEach(c => {
+      const map = { tools: "工具调用", reasoning: "推理", structured: "结构化输出", effort: "可调强度", open: "开放权重" };
+      tags.push([map[c] || c, "cap:" + c]);
+    });
+    if (!tags.length) { host.innerHTML = ""; return; }
+    host.innerHTML = `<span class="flabel">已选</span>` + tags.map(([t, k]) =>
+      `<span class="tag">${esc(t)}<button data-clear="${esc(k)}" title="移除">✕</button></span>`).join("");
+  }
+
+  /* ---------------- modal ---------------- */
+  const TABS = [
+    { id: "overview", label: "概览" },
+    { id: "caps", label: "能力与模态" },
+    { id: "cost", label: "价格" },
+    { id: "api", label: "API 接入" },
+    { id: "raw", label: "原始 JSON" }
+  ];
+  let currentModel = null, currentTab = "overview";
+
+  function openModal(id) {
+    const m = ALL.find(x => x.id === id);
+    if (!m) return;
+    currentModel = m; currentTab = "overview";
+    $("#mTitle").innerHTML = `${esc(m.name)} ${m.open_weights ? '<span class="b open">开放权重</span>' : ""}${inPrice(m) === 0 ? '<span class="b free">免费</span>' : ""}`;
+    $("#mMeta").textContent = `${m.id}${m.canonical_id ? "  ·  " + m.canonical_id : ""}`;
+    $("#mDesc").textContent = m.description || "";
+    $("#mTabs").innerHTML = TABS.map(t => `<button class="mtab ${t.id === "overview" ? "on" : ""}" data-tab="${t.id}">${t.label}</button>`).join("");
+    renderTab();
+    $("#overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal() {
+    $("#overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function renderTab() {
+    const m = currentModel; const b = $("#mBody");
+    if (!m) return;
+    if (currentTab === "overview") {
+      const kv = [
+        ["模型 ID", m.id, true],
+        ["规范 ID", m.canonical_id || "—", true],
+        ["提供商", providerOf(m)],
+        ["模型系列", m.family || "—", true],
+        ["类型", m.type || "—"],
+        ["归属", m.owned_by || "—"],
+        ["上下文窗口", fmtNum((m.limit || {}).context)],
+        ["最大输入", (m.limit || {}).input ? fmtNum(m.limit.input) : "未限制"],
+        ["最大输出", fmtNum((m.limit || {}).output)],
+        ["知识截止", m.knowledge || "未声明"],
+        ["发布日期", m.release_date || "—"],
+        ["最后更新", m.last_updated || "—"]
+      ];
+      b.innerHTML = `
+        <div class="sec"><h4>基本信息</h4><dl class="kv">
+          ${kv.map(x => `<div><dt>${x[0]}</dt><dd class="${x[2] ? "mono" : ""}">${esc(x[1])}</dd></div>`).join("")}
+        </dl></div>
+        <div class="sec"><h4>说明</h4><div class="codeblock" style="white-space:pre-wrap">${esc(m.description || "（无描述）")}</div></div>
+        <div class="sec"><h4>快捷操作</h4><div class="chips">
+          <button class="chip" id="cpId"><span class="dot"></span>复制模型 ID</button>
+          <button class="chip" id="cpJson"><span class="dot"></span>复制本模型 JSON</button>
+          <button class="chip" id="cpBase"><span class="dot"></span>复制 base_url</button>
+        </div></div>`;
+      $("#cpId").onclick = () => copy(m.id, "模型 ID 已复制");
+      $("#cpJson").onclick = () => copy(JSON.stringify(m, null, 2), "模型 JSON 已复制");
+      const bu = (m.api && m.api["chat-completions"] && m.api["chat-completions"].base_url) || (m.api && Object.values(m.api)[0] && Object.values(m.api)[0].base_url);
+      $("#cpBase").onclick = () => copy(bu || "", "base_url 已复制");
+    }
+    else if (currentTab === "caps") {
+      const c = m.capabilities || {};
+      const rows = [
+        ["工具调用", c.tools && c.tools.supported ? "支持" : "不支持"],
+        ["推理能力", c.reasoning && c.reasoning.supported ? "支持" : "不支持"],
+        ["推理强度档位", c.reasoning && c.reasoning.effort ? c.reasoning.effort.join(", ") : "—"],
+        ["结构化输出", c.structured_output === true ? "支持" : (c.structured_output === false ? "不支持" : "未声明")],
+        ["temperature", c.temperature === true ? "支持" : (c.temperature === false ? "不支持" : "未声明")],
+        ["top_p", c.top_p === true ? "支持" : (c.top_p === false ? "不支持" : "未声明")],
+        ["top_k", c.top_k === true ? "支持" : (c.top_k === false ? "不支持" : "未声明")],
+        ["系统提示动态更新", c.system_updates ? "支持" : "不支持"],
+        ["推理强度动态更新", c.effort_updates ? "支持" : "不支持"]
+      ];
+      const ins = (m.modalities && m.modalities.input) || [];
+      const outs = (m.modalities && m.modalities.output) || [];
+      const cats = modCats(m);
+      const group = (arr, prefix) => arr.filter(x => String(x).startsWith(prefix));
+      const other = ins.filter(x => { const t = String(x).toLowerCase(); return t === "text" || t.startsWith("image/") || t.startsWith("audio/") || t.startsWith("video/") || t.includes("pdf") || t === "image"; });
+      b.innerHTML = `
+        <div class="sec"><h4>输入模态</h4>
+          <div class="badges" style="margin-bottom:10px">
+            ${cats.has("text") ? '<span class="b text">文本</span>' : ""}
+            ${cats.has("image") ? '<span class="b image">图片</span>' : ""}
+            ${cats.has("audio") ? '<span class="b audio">音频</span>' : ""}
+            ${cats.has("video") ? '<span class="b video">视频</span>' : ""}
+            ${cats.has("doc") ? '<span class="b doc">文档</span>' : ""}
+          </div>
+          <div class="codeblock">${esc(ins.join("\n") || "—")}</div>
+        </div>
+        <div class="sec"><h4>输出模态</h4><div class="codeblock">${esc(outs.join("\n") || "—")}</div></div>
+        <div class="sec"><h4>能力开关</h4><dl class="kv">
+          ${rows.map(r => `<div><dt>${r[0]}</dt><dd>${esc(r[1])}</dd></div>`).join("")}
+        </dl></div>
+        ${c.cache ? `<div class="sec"><h4>缓存 (Prompt Cache)</h4><div class="codeblock">${esc(JSON.stringify(c.cache, null, 2))}</div></div>` : ""}
+        ${other.length ? "" : ""}`;
+    }
+    else if (currentTab === "cost") {
+      const cost = m.cost || {};
+      const t = cost.text || {};
+      const inp = t.input || {}, outp = t.output || {};
+      const cache = inp.cache || {};
+      const lines = [];
+      lines.push(`输入       ${fmtPrice(inp.price)} / 1M tokens`);
+      if (cache.read !== undefined) lines.push(`  缓存读取 ${fmtPrice(cache.read)} / 1M tokens`);
+      if (cache.write !== undefined) lines.push(`  缓存写入 ${fmtPrice(cache.write)} / 1M tokens`);
+      lines.push(`输出       ${fmtPrice(outp.price)} / 1M tokens`);
+      if (cost.audio) lines.push(`音频输入   ${fmtPrice(cost.audio.input && cost.audio.input.price)} / 1M tokens`);
+      let extra = "";
+      if (inp.overrides || outp.overrides) {
+        extra = `<div class="sec"><h4>阶梯定价</h4><div class="codeblock">${esc(JSON.stringify({ input: inp.overrides, output: outp.overrides }, null, 2))}</div></div>`;
+      }
+      if (cost.multipliers) {
+        extra += `<div class="sec"><h4>系数调整</h4><div class="codeblock">${esc(JSON.stringify(cost.multipliers, null, 2))}</div></div>`;
+      }
+      b.innerHTML = `
+        <div class="sec"><h4>文本计费</h4><div class="codeblock">${esc(lines.join("\n"))}</div></div>
+        ${extra}
+        <div class="sec"><h4>完整 cost 结构</h4><div class="codeblock">${esc(JSON.stringify(cost, null, 2))}</div></div>`;
+    }
+    else if (currentTab === "api") {
+      const api = m.api || {};
+      const keys = Object.keys(api);
+      b.innerHTML = keys.length ? keys.map(k => {
+        const a = api[k] || {};
+        const caps = a.capabilities || {};
+        const toolCaps = caps.tools || {};
+        const lines = [];
+        if (a.base_url) lines.push(`base_url  ${a.base_url}`);
+        if (a.sdk) lines.push(`SDK       aisdk: ${a.sdk.aisdk || "—"}   opencodeai: ${a.sdk.opencodeai || "—"}`);
+        if (toolCaps.choice) lines.push(`tool_choice 选项: ${toolCaps.choice.join(", ")}`);
+        if (toolCaps.strict !== undefined) lines.push(`strict 模式: ${toolCaps.strict ? "支持" : "不支持"}`);
+        if (toolCaps.updates !== undefined) lines.push(`工具更新: ${toolCaps.updates ? "支持" : "不支持"}`);
+        if (toolCaps.freeform) lines.push(`freeform: ${toolCaps.freeform.join(", ")}`);
+        if (toolCaps.search) lines.push(`搜索工具: 支持`);
+        if (a.compatibility && a.compatibility.reasoning_field) lines.push(`推理字段: ${a.compatibility.reasoning_field}`);
+        return `<div class="api-card">
+          <div class="hd"><span class="fmt">${esc(k)}</span><span class="b text">${esc(API_LABELS[k] || k)}</span></div>
+          <div class="codeblock" style="max-height:none">${esc(lines.join("\n"))}</div>
+        </div>`;
+      }).join("") : `<div class="empty"><div class="big">🚫</div><h3>该模型未声明 API 接入信息</h3></div>`;
+    }
+    else {
+      b.innerHTML = `<div class="sec"><h4>原始 JSON</h4><div class="codeblock">${esc(JSON.stringify(m, null, 2))}</div></div>`;
+    }
+  }
+
+  /* ---------------- misc ---------------- */
+  let toastTimer;
+  function toast(msg) {
+    const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+  async function copy(text, msg) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(msg || "已复制");
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(msg || "已复制"); }
+      catch (_) { toast("复制失败"); }
+      ta.remove();
+    }
+  }
+
+  function resetFilters() {
+    state.q = ""; state.provider = ""; state.family = ""; state.modality = "";
+    state.api = ""; state.price = ""; state.ctx = ""; state.caps.clear(); state.page = 1;
+    $("#q").value = ""; $("#searchWrap").classList.remove("has-value");
+    ["providerSel", "familySel", "modalitySel", "apiSel", "priceSel", "ctxSel"].forEach(id => { $("#" + id).value = ""; });
+    $$("#capChips .chip").forEach(c => c.classList.remove("on"));
+    render();
+  }
+
+  /* ---------------- events ---------------- */
+  let qTimer;
+  $("#q").addEventListener("input", e => {
+    const v = e.target.value;
+    $("#searchWrap").classList.toggle("has-value", !!v);
+    clearTimeout(qTimer);
+    qTimer = setTimeout(() => { state.q = v; state.page = 1; render(); }, 160);
+  });
+  $("#qClear").onclick = () => { $("#q").value = ""; $("#searchWrap").classList.remove("has-value"); state.q = ""; state.page = 1; render(); };
+
+  [["providerSel", "provider"], ["familySel", "family"], ["modalitySel", "modality"],
+   ["apiSel", "api"], ["priceSel", "price"], ["ctxSel", "ctx"]].forEach(([id, key]) => {
+    $("#" + id).addEventListener("change", e => { state[key] = e.target.value; state.page = 1; render(); });
+  });
+
+  $("#sortSel").addEventListener("change", e => {
+    state.sort = e.target.value;
+    if (state.sort !== "default" && ["context", "output", "price", "release"].includes(state.sort)) state.sortDir = "desc";
+    else state.sortDir = "asc";
+    state.page = 1; render();
+  });
+
+  $$("thead th.sortable").forEach(th => th.addEventListener("click", () => {
+    const k = th.dataset.sort;
+    if (state.sort === k) state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+    else { state.sort = k; state.sortDir = ["context", "output", "price", "release"].includes(k) ? "desc" : "asc"; }
+    $("#sortSel").value = (state.sort === "default") ? "default" : (state.sort === "provider" ? "default" : state.sort);
+    if (state.sort === "provider") $("#sortSel").value = "default";
+    state.page = 1; render();
+  }));
+
+  $$("#capChips .chip").forEach(chip => chip.addEventListener("click", () => {
+    const cap = chip.dataset.cap;
+    if (state.caps.has(cap)) { state.caps.delete(cap); chip.classList.remove("on"); }
+    else { state.caps.add(cap); chip.classList.add("on"); }
+    state.page = 1; render();
+  }));
+
+  $("#activeFilters").addEventListener("click", e => {
+    const b = e.target.closest("[data-clear]");
+    if (!b) return;
+    const k = b.dataset.clear;
+    if (k.startsWith("cap:")) {
+      const c = k.slice(4); state.caps.delete(c);
+      const chip = $(`#capChips .chip[data-cap="${c}"]`); if (chip) chip.classList.remove("on");
+    } else if (k === "q") { $("#q").value = ""; $("#searchWrap").classList.remove("has-value"); state.q = ""; }
+    else if (k === "modality") $("#modalitySel").value = "";
+    else if (k === "ctx") $("#ctxSel").value = "";
+    else { state[k] = ""; const map = { provider: "providerSel", family: "familySel", api: "apiSel", price: "priceSel" }; if (map[k]) $("#" + map[k]).value = ""; }
+    state.page = 1; render();
+  });
+
+  $("#btnReset").onclick = resetFilters;
+  $("#sizeSel").addEventListener("change", e => { state.size = Number(e.target.value); state.page = 1; render(); });
+  $("#btnRefresh").onclick = () => { $("#refreshIco").classList.add("spin"); load().finally(() => $("#refreshIco").classList.remove("spin")); };
+  $("#btnCopyAll").onclick = () => copy(JSON.stringify(ALL, null, 2), `已复制全部 ${ALL.length} 个模型 JSON`);
+
+  $("#btnTheme").onclick = () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    const next = cur === "dark" ? "light" : cur === "light" ? "auto" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("oc-theme", next);
+    toast("主题：" + ({ dark: "深色", light: "浅色", auto: "跟随系统" }[next]));
+  };
+  const savedTheme = localStorage.getItem("oc-theme");
+  if (savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
+
+  document.addEventListener("click", e => {
+    const detail = e.target.closest("[data-detail]");
+    if (detail) { openModal(detail.dataset.detail); return; }
+    const row = e.target.closest("tbody tr[data-id]");
+    if (row) { openModal(row.dataset.id); return; }
+    const pg = e.target.closest("#pager button[data-page]");
+    if (pg && !pg.disabled) { state.page = Number(pg.dataset.page); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  });
+
+  $("#mTabs").addEventListener("click", e => {
+    const t = e.target.closest("[data-tab]");
+    if (!t) return;
+    currentTab = t.dataset.tab;
+    $$("#mTabs .mtab").forEach(x => x.classList.toggle("on", x === t));
+    renderTab();
+  });
+  $("#mClose").onclick = closeModal;
+  $("#overlay").addEventListener("click", e => { if (e.target === $("#overlay")) closeModal(); });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { if ($("#overlay").classList.contains("open")) closeModal(); return; }
+    if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); $("#q").select(); }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
