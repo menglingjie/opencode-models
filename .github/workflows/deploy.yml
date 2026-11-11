@@ -30,11 +30,18 @@ jobs:
       - name: 配置 Pages
         uses: actions/configure-pages@v5
 
+      - name: 准备站点目录
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          # .nojekyll 可选，缺失时不报错
+          cp .nojekyll _site/ 2>/dev/null || true
+
       - name: 上传静态文件
         uses: actions/upload-pages-artifact@v3
         with:
-          # 站点根目录就是仓库根目录，index.html 在顶层
-          path: '.'
+          # 只发布 _site，避免 README 等仓库文件被公开
+          path: '_site'
 
       - name: 发布到 GitHub Pages
         id: deployment

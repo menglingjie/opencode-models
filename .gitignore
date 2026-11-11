@@ -6,3 +6,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# 部署临时目录
+_site/
